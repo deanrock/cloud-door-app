@@ -22,6 +22,10 @@ class ConfigurationValues {
 class Configuration {
     let keychain = KeychainSwift()
     
+    init() {
+        keychain.synchronizable = true
+    }
+    
     func get() -> ConfigurationValues {
         let username = keychain.get("username") ?? ""
         let password = keychain.get("password") ?? ""
