@@ -73,6 +73,16 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		0558DF4D2D3D18F400D08D16 /* Exceptions for "CloudDoor" folder in "WatchCloudDoor Watch App" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Cache.swift,
+				Configuration.swift,
+				LocationManager.swift,
+				Locations.swift,
+			);
+			target = 0558DF1A2D3D164D00D08D16 /* WatchCloudDoor Watch App */;
+		};
 		05B038DD2CAB519E00EABA4C /* Exceptions for "CloudDoor" folder in "CloudDoor" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -87,6 +97,7 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				05B038DD2CAB519E00EABA4C /* Exceptions for "CloudDoor" folder in "CloudDoor" target */,
+				0558DF4D2D3D18F400D08D16 /* Exceptions for "CloudDoor" folder in "WatchCloudDoor Watch App" target */,
 			);
 			path = CloudDoor;
 			sourceTree = "<group>";
