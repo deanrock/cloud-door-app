@@ -20,7 +20,7 @@ struct DoorEntry: TimelineEntry {
 
 struct DoorTimelineProvider: AppIntentTimelineProvider {
     func placeholder(in context: Context) -> DoorEntry {
-        DoorEntry(date: .now, door: DoorEntity(id: "preview", name: "Front door"), activity: nil)
+        DoorEntry(date: .now, door: DoorEntity(id: "preview", name: "Door"), activity: nil)
     }
 
     func snapshot(for configuration: SelectDoorWidgetIntent, in context: Context) async -> DoorEntry {
@@ -44,7 +44,7 @@ struct DoorTimelineProvider: AppIntentTimelineProvider {
     }
 
     private func currentEntry(for configuration: SelectDoorWidgetIntent) -> DoorEntry {
-        let door = WidgetDoors.resolve(configuration.door, in: WidgetDoors.cachedDoors())
+        let door = WidgetDoors.resolve(configuration.door, in: WidgetDoors.cachedDoors(), signedIn: WidgetDoors.isSignedIn())
         return DoorEntry(date: .now, door: door, activity: door.flatMap { DoorActivityStore().current(for: $0.id) })
     }
 }

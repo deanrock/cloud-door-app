@@ -76,7 +76,7 @@ extension OpenDoorControl {
         }
 
         func currentValue(configuration: SelectDoorControlIntent) async throws -> Value {
-            let door = WidgetDoors.resolve(configuration.door, in: WidgetDoors.cachedDoors())
+            let door = WidgetDoors.resolve(configuration.door, in: WidgetDoors.cachedDoors(), signedIn: WidgetDoors.isSignedIn())
             return Value(door: door, activity: door.flatMap { DoorActivityStore().current(for: $0.id) })
         }
     }
