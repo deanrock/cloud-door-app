@@ -26,6 +26,8 @@ struct SettingsView: View {
     @State private var showClearConfirmation = false
     /// True after the server accepted the details and they were saved.
     @State private var saveSucceeded = false
+    /// True while the details are being tested against the server and saved.
+    @State private var isSaving = false
 
     private enum Field {
         case email, password, hostname
@@ -95,6 +97,8 @@ struct SettingsView: View {
                             .accessibilityIdentifier("serverField")
                     }
                 }
+                // The details being tested must not change underneath the request.
+                .disabled(isSaving)
                 // Return moves to the next field, and the last one dismisses the keyboard.
                 .onSubmit {
                     switch focusedField {
@@ -104,14 +108,17 @@ struct SettingsView: View {
                     }
                 }
 
-                Button("Sign In & Save") {
+                Button {
+                    guard !isSaving else { return }
                     // Dismiss the keyboard so the result isn't hidden behind it.
                     focusedField = nil
                     saveError = nil
                     saveSucceeded = false
+                    isSaving = true
                     // New details are only saved once the server has accepted them, so a failed attempt keeps
                     // whatever was saved before.
                     Task {
+                        defer { isSaving = false }
                         let api = API(url: self.hostname, username: username, password: password)
 
                         do {
@@ -129,7 +136,16 @@ struct SettingsView: View {
                                 .error("\(info.title, privacy: .public): \(info.message, privacy: .public) [\(info.details ?? "no details", privacy: .public)]")
                         }
                     }
+                } label: {
+                    HStack(spacing: 8) {
+                        Text(isSaving ? "Signing In…" : "Sign In & Save")
+                        if isSaving {
+                            ProgressView()
+                        }
+                    }
                 }
+                .disabled(isSaving)
+                .accessibilityIdentifier("signInButton")
 
                 if saveSucceeded {
                     Section {
@@ -204,20 +220,13 @@ struct SettingsView: View {
                     }
                 }
 
-                if self.hostname != self.productionHost {
-                    Section {
-                        Button("Reset to default server") {
-                            self.hostname = self.productionHost
-                        }
-                    }
-                }
-
                 // Removes the saved account, for signing out or for starting over.
                 if let savedAccount {
                     Section {
                         Button(SignInText.clearButton, role: .destructive) {
                             showClearConfirmation = true
                         }
+                        .disabled(isSaving)
                         .accessibilityIdentifier("clearCredentials")
                     } footer: {
                         Text("Signed in as \(savedAccount)")
@@ -230,6 +239,7 @@ struct SettingsView: View {
                     savedAccount = nil
                     username = ""
                     password = ""
+                    hostname = productionHost
                     saveError = nil
                     saveSucceeded = false
                     onAccountChanged()
