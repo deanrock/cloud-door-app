@@ -1,0 +1,46 @@
+{
+  "configurations" : [
+    {
+      "id" : "C96CE657-54A0-4DE1-8A4F-0BDA8E49A3B4",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "performanceAntipatternCheckerEnabled" : true,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:CloudDoor.xcodeproj",
+      "identifier" : "053F0A9F2CA9AE03008F0EA8",
+      "name" : "CloudDoor"
+    },
+    "testInteropMode" : "complete"
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:CloudDoor.xcodeproj",
+        "identifier" : "053F0AAF2CA9AE06008F0EA8",
+        "name" : "CloudDoorTests"
+      }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:CloudDoor.xcodeproj",
+        "identifier" : "053F0AB92CA9AE06008F0EA8",
+        "name" : "CloudDoorUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:CloudDoor.xcodeproj",
+        "identifier" : "CDBE9D2A3090FC5000B61394",
+        "name" : "CloudDoorKitTests"
+      }
+    }
+  ],
+  "version" : 1
+}
