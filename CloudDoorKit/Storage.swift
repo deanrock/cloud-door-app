@@ -9,7 +9,7 @@ import Foundation
 import KeychainSwift
 
 public enum SharedIdentifiers {
-    public static let appGroup = "group.com.dejanlevec.dooropener.shared"
+    public static let appGroup = "group.com.dejanlevec.dooropener.shrd"
 }
 
 /// A failed keychain write, carrying the Security framework status code (for example -34018 is a missing entitlement).
