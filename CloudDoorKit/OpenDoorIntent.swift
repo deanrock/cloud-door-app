@@ -23,6 +23,7 @@ public struct OpenDoorIntent: AppIntent {
     public static let authenticationPolicy: IntentAuthenticationPolicy = .requiresAuthentication
 
     /// Runs headless; if no location is available there, it can bring the app forward to get one.
+    @available(iOS 26.0, *)
     public static var supportedModes: IntentModes { [.background, .foreground(.dynamic)] }
 
     public static var parameterSummary: some ParameterSummary {
@@ -47,8 +48,9 @@ public struct OpenDoorIntent: AppIntent {
                 id: door.id,
                 using: service,
                 recorder: DoorActivityRecorder(),
-                canContinueInForeground: systemContext.currentMode.canContinueInForeground,
+                canContinueInForeground: Self.canContinueInForeground(systemContext),
                 continueInForeground: {
+                    guard #available(iOS 26.0, *) else { return }
                     try await continueInForeground("Open CloudDoor to find your location?", alwaysConfirm: false)
                 })
         } catch {
@@ -56,6 +58,11 @@ public struct OpenDoorIntent: AppIntent {
         }
 
         return .result(dialog: "Opened \(name).")
+    }
+
+    private static func canContinueInForeground(_ context: IntentSystemContext) -> Bool {
+        guard #available(iOS 26.0, *) else { return false }
+        return context.currentMode.canContinueInForeground
     }
 
     /// Opens the door and records each step, so widgets and controls can show "opening", "opened" or what went wrong.

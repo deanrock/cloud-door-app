@@ -28,25 +28,13 @@ public struct DoorLocator: LocationProviding {
     static func freshFix(timeout: Duration, policy: LocationResolver.Policy) async -> CLLocation? {
         await withTaskGroup(of: CLLocation?.self) { group in
             group.addTask {
+                // shortcut: iOS 17 has no service session or denial flags, so a denied fix waits out the timeout.
+                guard #available(iOS 18.0, *) else { return await liveFix(policy: policy) }
+
                 // The session declares that we need when-in-use access, and must stay alive while we listen.
                 let session = CLServiceSession(authorization: .whenInUse)
                 defer { session.invalidate() }
-
-                do {
-                    for try await update in CLLocationUpdate.liveUpdates() {
-                        // Waiting longer won't help: report "no fix" right away instead of using up the timeout.
-                        if update.authorizationDenied || update.insufficientlyInUse { return nil }
-
-                        guard let location = update.location,
-                              location.horizontalAccuracy >= 0,
-                              location.horizontalAccuracy <= policy.maxAccuracy,
-                              Date().timeIntervalSince(location.timestamp) <= policy.maxAge else { continue }
-                        return location
-                    }
-                } catch {
-                    // Treated like "no fix": the resolver falls back to the last-known location.
-                }
-                return nil
+                return await liveFix(policy: policy)
             }
             group.addTask {
                 try? await Task.sleep(for: timeout)
@@ -58,5 +46,23 @@ public struct DoorLocator: LocationProviding {
             group.cancelAll()
             return first
         }
+    }
+
+    private static func liveFix(policy: LocationResolver.Policy) async -> CLLocation? {
+        do {
+            for try await update in CLLocationUpdate.liveUpdates() {
+                // Waiting longer won't help: report "no fix" right away instead of using up the timeout.
+                if #available(iOS 18.0, *), update.authorizationDenied || update.insufficientlyInUse { return nil }
+
+                guard let location = update.location,
+                      location.horizontalAccuracy >= 0,
+                      location.horizontalAccuracy <= policy.maxAccuracy,
+                      Date().timeIntervalSince(location.timestamp) <= policy.maxAge else { continue }
+                return location
+            }
+        } catch {
+            // Treated like "no fix": the resolver falls back to the last-known location.
+        }
+        return nil
     }
 }

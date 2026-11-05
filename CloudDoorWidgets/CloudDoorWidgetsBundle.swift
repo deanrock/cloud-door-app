@@ -20,7 +20,9 @@ struct CloudDoorWidgetsPackage: AppIntentsPackage {
 @main
 struct CloudDoorWidgetsBundle: WidgetBundle {
     var body: some Widget {
-        OpenDoorControl()
+        if #available(iOS 18.0, *) {
+            OpenDoorControl()
+        }
         DoorWidget()
     }
 }

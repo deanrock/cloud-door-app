@@ -99,7 +99,7 @@ struct ContentView: View {
 
             // Widgets and controls read the same door list, so they should show the new one right away.
             WidgetCenter.shared.reloadAllTimelines()
-            ControlCenter.shared.reloadAllControls()
+            if #available(iOS 18.0, *) { ControlCenter.shared.reloadAllControls() }
 
             // The Apple Watch shows the same doors.
             PhoneConnection.shared.send()
@@ -121,7 +121,7 @@ struct ContentView: View {
         locations = []
         cache.clearCachedLocations()
         WidgetCenter.shared.reloadAllTimelines()
-        ControlCenter.shared.reloadAllControls()
+        if #available(iOS 18.0, *) { ControlCenter.shared.reloadAllControls() }
         // Also tells the watch about a new account or a sign-out; the account is saved before this runs.
         PhoneConnection.shared.send()
     }

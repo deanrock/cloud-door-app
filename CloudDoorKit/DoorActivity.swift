@@ -82,7 +82,7 @@ struct DoorActivityRecorder {
         reload: @escaping (DoorActivity.Phase) -> Void = { phase in
             WidgetCenter.shared.reloadAllTimelines()
             // A control already shows its own spinner while it runs, and the system refreshes it when it finishes.
-            if phase != .opening {
+            if phase != .opening, #available(iOS 18.0, *) {
                 ControlCenter.shared.reloadAllControls()
             }
         },
@@ -92,7 +92,7 @@ struct DoorActivityRecorder {
             Task {
                 try? await Task.sleep(for: .seconds(delay + 0.3))
                 WidgetCenter.shared.reloadAllTimelines()
-                ControlCenter.shared.reloadAllControls()
+                if #available(iOS 18.0, *) { ControlCenter.shared.reloadAllControls() }
             }
         },
         now: @escaping () -> Date = Date.init

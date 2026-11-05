@@ -11,6 +11,7 @@ import SwiftUI
 import WidgetKit
 
 /// Lets the person choose which door a control or widget opens.
+@available(iOS 18.0, *)
 struct SelectDoorControlIntent: ControlConfigurationIntent {
     static let title: LocalizedStringResource = "Select Door"
 
@@ -30,6 +31,7 @@ struct SelectDoorWidgetIntent: WidgetConfigurationIntent {
     init() {}
 }
 
+@available(iOS 18.0, *)
 struct OpenDoorControl: ControlWidget {
     static let kind = "com.dejanlevec.dooropener.OpenDoorControl"
 
@@ -52,6 +54,7 @@ struct OpenDoorControl: ControlWidget {
     }
 }
 
+@available(iOS 18.0, *)
 extension OpenDoorControl {
     struct Value {
         /// Nil when no door is chosen yet, or the chosen door no longer exists.

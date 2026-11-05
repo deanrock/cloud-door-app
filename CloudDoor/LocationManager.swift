@@ -43,15 +43,27 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
             || (address != nil && location.distance(from: last.location) < minimumDistance) {
             return
         }
-        guard let request = MKReverseGeocodingRequest(location: location) else { return }
         lastGeocoded = (location, Date())
 
         // Only the newest lookup matters.
         geocodingTask?.cancel()
         geocodingTask = Task { @MainActor in
-            let item = try? await request.mapItems.first
+            let address = await Self.lookUpAddress(of: location)
             guard !Task.isCancelled else { return }
-            self.address = item?.address?.shortAddress ?? item?.address?.fullAddress
+            self.address = address
         }
+    }
+
+    private static func lookUpAddress(of location: CLLocation) async -> String? {
+        guard #available(iOS 26.0, *) else {
+            // MapKit's address lookup is iOS 26; before that, Core Location's geocoder does the same job.
+            guard let placemark = try? await CLGeocoder().reverseGeocodeLocation(location).first else { return nil }
+            let street = [placemark.subThoroughfare, placemark.thoroughfare].compactMap { $0 }.joined(separator: " ")
+            let parts = [street, placemark.locality ?? ""].filter { !$0.isEmpty }
+            return parts.isEmpty ? nil : parts.joined(separator: ", ")
+        }
+        guard let request = MKReverseGeocodingRequest(location: location) else { return nil }
+        let item = try? await request.mapItems.first
+        return item?.address?.shortAddress ?? item?.address?.fullAddress
     }
 }
