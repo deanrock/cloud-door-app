@@ -7,13 +7,13 @@
 
 import CoreLocation
 
-struct LocationWithDistance: Identifiable {
-    var id: String
-    var location: Location
-    var distance: Int?
-    var inRadius: Bool
+public struct LocationWithDistance: Identifiable {
+    public var id: String
+    public var location: Location
+    public var distance: Int?
+    public var inRadius: Bool
     
-    init(location: Location, distance: Int?) {
+    public init(location: Location, distance: Int?) {
         self.location = location
         self.id = location.id
         self.distance = distance
@@ -26,7 +26,7 @@ struct LocationWithDistance: Identifiable {
     }
 }
 
-func getLocationsWithDistance(locations: [Location], distanceToLocation: CLLocation?) -> [LocationWithDistance] {
+public func getLocationsWithDistance(locations: [Location], distanceToLocation: CLLocation?) -> [LocationWithDistance] {
     return locations.map { location in
         if let distanceToLocation = distanceToLocation {
             let distance = Int(distanceToLocation.distance(from: CLLocation(latitude: location.geolocations[0].latitude, longitude: location.geolocations[0].longitude)))
@@ -38,7 +38,7 @@ func getLocationsWithDistance(locations: [Location], distanceToLocation: CLLocat
     }
 }
 
-func optionalDistanceToString(distance: Int?) -> String {
+public func optionalDistanceToString(distance: Int?) -> String {
     if let distance = distance {
         if distance > 1000 {
             return " (\(distance/1000)km)"
