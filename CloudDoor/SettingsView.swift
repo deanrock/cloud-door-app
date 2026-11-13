@@ -15,23 +15,18 @@ struct SettingsView: View {
 
     @State private var username: String
     @State private var password: String
-    @State private var hostname: String
     
-    let testingHost = "https://cloud-door-mock.test.dejanlevec.com"
-    let productionHost = "https://api.doorcloud.com"
     let configuration = Configuration()
     
     init() {
         let values = configuration.get()
         self.username = values.username
         self.password = values.password
-        self.hostname = values.hostname == "" ? self.productionHost : values.hostname
     }
 
     func fillTestAccountInfo() {
         self.username = "user@example.com"
         self.password = "password"
-        self.hostname = testingHost
     }
 
     var body: some View {
@@ -53,25 +48,17 @@ struct SettingsView: View {
                         Text("Password")
                             .foregroundStyle(.secondary)
                     }
-
-                    LabeledContent {
-                        TextField("", text: $hostname, prompt: Text("required"))
-                            .autocapitalization(.none)
-                    } label: {
-                        Text("Hostname")
-                            .foregroundStyle(.secondary)
-                    }
                 }
 
                 Button("Test & update") {
                     Task {
-                        let api = API(url: self.hostname, username: username, password: password)
+                        let api = API(url: Hostname.hostname, username: username, password: password)
                         
                         do {
                             let _ = try await api.getToken()
                             
-                            configuration.set(username: username, password: password, hostname: hostname)
-                            
+                            configuration.set(username: username, password: password)
+
                             alertTitle = "Success"
                             alertMessage = "Configuration saved."
                             showAlert = true
@@ -83,14 +70,6 @@ struct SettingsView: View {
                             alertTitle = "Error"
                             alertMessage = "Unknown error: \(error)"
                             showAlert = true
-                        }
-                    }
-                }
-
-                if self.hostname != self.productionHost {
-                    Section {
-                        Button("Reset to default hostname") {
-                            self.hostname = self.productionHost
                         }
                     }
                 }

@@ -76,7 +76,7 @@ class API {
     
     static func initFromConfiguration(configuration: Configuration) -> API {
         let values = configuration.get()
-        return API(url: values.hostname, username: values.username, password: values.password)
+        return API(url: Hostname.hostname, username: values.username, password: values.password)
     }
     
     private func request<T: Decodable>(method: String, path: String, contentType: String?, data: String?, token: String?) async throws -> T {
