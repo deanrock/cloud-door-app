@@ -47,7 +47,7 @@ struct ContentView: View {
             VStack {
                 Label("Please configure credentials in Settings.", systemImage: "info.circle")
             }
-            .opacity(configuration.get().hostname.isEmpty ? 1 : 0)
+            .opacity(configuration.get().username.isEmpty ? 1 : 0)
             VStack {
                 List(locations) { index in
                     HStack {
@@ -103,7 +103,7 @@ struct ContentView: View {
             .alert(isPresented: $showAlert, content: {
                 Alert(title: Text(self.alertTitle), message: Text(self.alertMessage), dismissButton: .default(Text("OK")))
             })
-            .opacity(configuration.get().hostname.isEmpty ? 0 : 1)
+            .opacity(configuration.get().username.isEmpty ? 0 : 1)
         }
     }
 }
